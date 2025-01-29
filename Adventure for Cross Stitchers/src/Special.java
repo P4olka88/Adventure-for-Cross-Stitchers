@@ -1,6 +1,8 @@
 import java.util.Random;
 
 public enum Special {
+    START,
+    FINISH,
     JUMP_BACK_START,
     JUMP_BACK_FINISH,
     JUMP_AHEAD_START,

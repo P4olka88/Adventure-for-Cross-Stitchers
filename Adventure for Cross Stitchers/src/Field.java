@@ -32,4 +32,13 @@ public class Field {
     public void setPlayer_position(boolean player_position) {
         this.player_position = player_position;
     }
+
+    @Override
+    public String toString() {
+        return "Field{" +
+                "id=" + id +
+                ", special=" + special +
+                ", player_position=" + player_position +
+                '}';
+    }
 }

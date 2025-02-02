@@ -6,7 +6,7 @@ public class MapGeneration {
     private int jumpBack = 3;
     private int jumpAhead = 5;
     private int pass=2;
-    private int startAgain;
+    private int startAgain=1;
     private int additional;
     private int x2;
     private int add500x;
@@ -204,8 +204,8 @@ public class MapGeneration {
             }while (gameMap.containsKey(jumpStartBack) && attempt <=size);
             int jumpFinishBack = random.nextInt(1,jumpStartBack-1);
             if(!gameMap.containsKey(jumpStartBack) && !gameMap.containsKey(jumpFinishBack)) {
-                gameMap.put(jumpStartBack, new Field(jumpStartBack, Special.JUMP_BACK_START, false));
-                gameMap.put(jumpFinishBack, new Field(jumpFinishBack, Special.JUMP_BACK_FINISH, false));
+                gameMap.put(jumpStartBack, new Field(jumpStartBack,jumpFinishBack, Special.JUMP_BACK_START, false));
+                gameMap.put(jumpFinishBack, new Field(jumpFinishBack,0, Special.JUMP_BACK_FINISH, false));
                 System.out.println("jumpStartBack " + jumpStartBack);
                 System.out.println("jumpFinishBack " + jumpFinishBack);
             }
@@ -214,17 +214,18 @@ public class MapGeneration {
         for(int i=1;i<=jumpAhead; i++) {
             int jumpStartAhead = 0;
             int attempt = 0;
+            int jumpFinishAhead = 0;
             do {
                 attempt++;
                 jumpStartAhead = random.nextInt(1, size - 1);
-            }while(gameMap.containsKey(jumpStartAhead) && attempt <=size);
-            int jumpFinishAhead = random.nextInt(jumpStartAhead + 1, size);
-            if(!gameMap.containsKey(jumpStartAhead) && !gameMap.containsKey(jumpFinishAhead)) {
-                gameMap.put(jumpStartAhead, new Field(jumpStartAhead, Special.JUMP_AHEAD_START, false));
-                gameMap.put(jumpFinishAhead, new Field(jumpFinishAhead, Special.JUMP_AHEAD_FINISH, false));
+                jumpFinishAhead = random.nextInt(jumpStartAhead + 1, size);
+            }while(gameMap.containsKey(jumpStartAhead)&& (gameMap.containsKey(jumpFinishAhead)) && attempt <=size);
+            //if(!gameMap.containsKey(jumpStartAhead) && !gameMap.containsKey(jumpFinishAhead)) {
+                gameMap.put(jumpStartAhead, new Field(jumpStartAhead,jumpFinishAhead, Special.JUMP_AHEAD_START, false));
+                gameMap.put(jumpFinishAhead, new Field(jumpFinishAhead, 0,Special.JUMP_AHEAD_FINISH, false));
                 System.out.println("jumpStartAhead " + jumpStartAhead);
                 System.out.println("jumpFinishAhead " + jumpFinishAhead);
-            }
+            //}
         }
         System.out.println(gameMap);
         return  gameMap;
@@ -242,17 +243,17 @@ public class MapGeneration {
     }
 
     private void setNormalField(){
-        gameMap.put(0, new Field(0, Special.START, true));
-        gameMap.put(size+1, new Field(size+1, Special.FINISH, false));
+        gameMap.put(0, new Field(0,0, Special.START, true));
+        gameMap.put(size+1, new Field(size+1,0, Special.FINISH, false));
         for (int i=1; i<=size; i++){
             if(!gameMap.containsKey(i)){
-                gameMap.put(i, new Field(i, Special.NORMAL_FIELD, false));
+                gameMap.put(i, new Field(i, 0,Special.NORMAL_FIELD, false));
             }
         }
     }
 
     private void setGameMap(int field, Special special){
-        gameMap.put(field, new Field(field, special, false));
+        gameMap.put(field, new Field(field,0, special, false));
     }
 
     private void printGameMap(){

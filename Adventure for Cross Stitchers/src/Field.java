@@ -2,11 +2,13 @@ public class Field {
     private int id;
     Special special;
     boolean player_position;
+    private int idFinish;
 
-    public Field(int id, Special special, boolean player_position)  {
+    public Field(int id, int idFinish, Special special, boolean player_position)  {
         this.special = special;
         this.player_position = player_position;
         this.id = id;
+        this.idFinish = idFinish;
     }
 
     public int getId() {
@@ -33,10 +35,19 @@ public class Field {
         this.player_position = player_position;
     }
 
+    public int getIdFinish() {
+        return idFinish;
+    }
+
+    public void setIdFinish(int idFinish) {
+        this.idFinish = idFinish;
+    }
+
     @Override
     public String toString() {
         return "Field{" +
                 "id=" + id +
+                ", idFinish=" + idFinish +
                 ", special=" + special +
                 ", player_position=" + player_position +
                 '}';

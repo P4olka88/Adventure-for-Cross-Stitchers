@@ -3,12 +3,14 @@ public class Field {
     Special special;
     boolean player_position;
     private int idFinish;
+    private String task;
 
-    public Field(int id, int idFinish, Special special, boolean player_position)  {
+    public Field(int id, int idFinish, Special special, boolean player_position, String task)  {
         this.special = special;
         this.player_position = player_position;
         this.id = id;
         this.idFinish = idFinish;
+        this.task = task;
     }
 
     public int getId() {
@@ -50,6 +52,7 @@ public class Field {
                 ", idFinish=" + idFinish +
                 ", special=" + special +
                 ", player_position=" + player_position +
+                ", task=" + task +
                 '}';
     }
 }

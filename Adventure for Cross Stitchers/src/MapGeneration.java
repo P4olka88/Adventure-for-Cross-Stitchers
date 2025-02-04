@@ -2,15 +2,15 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class MapGeneration {
-    private int size = 30;
+    private int size = 130;
     private int jumpBack = 3;
     private int jumpAhead = 5;
     private int pass=2;
     private int startAgain=1;
-    private int additional;
-    private int x2;
-    private int add500x;
-    private int specialColor;
+    private int additional=1;
+    private int x2=1;
+    private int add500x=2;
+    private int specialColor=1;
     private int goAhead;
     private int goBack;
     private int protection;
@@ -18,7 +18,7 @@ public class MapGeneration {
     private int jackPot;
     private int trajectoryChange;
     private int normalField;
-    HashMap<Integer, Field> gameMap = new HashMap<>();
+    HashMap<Integer, Field> gameMap = new HashMap<>(size+2, 0.9f);
 
     public int getSize() {
         return size;
@@ -143,49 +143,43 @@ public class MapGeneration {
     public HashMap generate(){
         jumps(jumpBack, jumpAhead);
         for(int i=1;i<=pass; i++) {
-            setGameMap(generateSpecialField(), Special.PASS);
+            setGameMap(generateSpecialField(), Special.PASS, Constants.PASS);
         }
         for(int i=1;i<=startAgain;i++){
-            setGameMap(generateSpecialField(), Special.START_AGAIN);
+            setGameMap(generateSpecialField(), Special.START_AGAIN, Constants.START_AGAIN);
         }
         for (int i=1;i<=additional; i++){
-            setGameMap(generateSpecialField(), Special.ADDITIONAL);
+            setGameMap(generateSpecialField(), Special.ADDITIONAL, Constants.ADDITIONAL);
         }
         for(int i=1; i<=x2;i++){
-            setGameMap(generateSpecialField(), Special.X2);
-        }
-        for(int i=1; i<=x2;i++){
-            setGameMap(generateSpecialField(), Special.X2);
-        }
-        for(int i=1; i<=x2;i++){
-            setGameMap(generateSpecialField(), Special.X2);
+            setGameMap(generateSpecialField(), Special.X2, "");
         }
         for(int i=1; i<=add500x;i++){
-            setGameMap(generateSpecialField(), Special.ADD500x);
+            setGameMap(generateSpecialField(), Special.ADD500x, "");
         }
         for(int i=1; i<=specialColor;i++){ // todo
-            setGameMap(generateSpecialField(), Special.SPECIAL_COLOR);
+            setGameMap(generateSpecialField(), Special.SPECIAL_COLOR, "");
         }
         for(int i=1; i<=goAhead;i++){
-            setGameMap(generateSpecialField(), Special.GO_AHEAD);
+            setGameMap(generateSpecialField(), Special.GO_AHEAD, "");
         }
         for(int i=1; i<=goBack;i++){
-            setGameMap(generateSpecialField(), Special.GO_BACK);
+            setGameMap(generateSpecialField(), Special.GO_BACK, "");
         }
         for(int i=1; i<=goBack;i++){
-            setGameMap(generateSpecialField(), Special.GO_BACK);
+            setGameMap(generateSpecialField(), Special.GO_BACK, "");
         }
         for(int i=1; i<=protection;i++){
-            setGameMap(generateSpecialField(), Special.PROTECTION);
+            setGameMap(generateSpecialField(), Special.PROTECTION, "");
         }
         for(int i=1; i<=darts;i++){ //todo
-            setGameMap(generateSpecialField(), Special.DARTS);
+            setGameMap(generateSpecialField(), Special.DARTS, "");
         }
         for(int i=1; i<=jackPot;i++){ // todo
-            setGameMap(generateSpecialField(), Special.JACKPOT);
+            setGameMap(generateSpecialField(), Special.JACKPOT, "");
         }
         for (int i=1; i<=trajectoryChange;i++){ // todo
-            setGameMap(generateSpecialField(), Special.TRAJECTORY_CHANGE);
+            setGameMap(generateSpecialField(), Special.TRAJECTORY_CHANGE, "");
         }
         setNormalField();
         printGameMap();
@@ -201,11 +195,11 @@ public class MapGeneration {
             do {
                 attempt++;
                 jumpStartBack = random.nextInt(3, size);
-            }while (gameMap.containsKey(jumpStartBack) && attempt <=size);
+            }while (gameMap.containsKey(jumpStartBack) && attempt <=size/2);
             int jumpFinishBack = random.nextInt(1,jumpStartBack-1);
             if(!gameMap.containsKey(jumpStartBack) && !gameMap.containsKey(jumpFinishBack)) {
-                gameMap.put(jumpStartBack, new Field(jumpStartBack,jumpFinishBack, Special.JUMP_BACK_START, false));
-                gameMap.put(jumpFinishBack, new Field(jumpFinishBack,0, Special.JUMP_BACK_FINISH, false));
+                gameMap.put(jumpStartBack, new Field(jumpStartBack,jumpFinishBack, Special.JUMP_BACK_START, false, Constants.JUMP + jumpFinishBack));
+                gameMap.put(jumpFinishBack, new Field(jumpFinishBack,0, Special.JUMP_BACK_FINISH, false, ""));
                 System.out.println("jumpStartBack " + jumpStartBack);
                 System.out.println("jumpFinishBack " + jumpFinishBack);
             }
@@ -219,15 +213,16 @@ public class MapGeneration {
                 attempt++;
                 jumpStartAhead = random.nextInt(1, size - 1);
                 jumpFinishAhead = random.nextInt(jumpStartAhead + 1, size);
-            }while(gameMap.containsKey(jumpStartAhead)&& (gameMap.containsKey(jumpFinishAhead)) && attempt <=size);
-            //if(!gameMap.containsKey(jumpStartAhead) && !gameMap.containsKey(jumpFinishAhead)) {
-                gameMap.put(jumpStartAhead, new Field(jumpStartAhead,jumpFinishAhead, Special.JUMP_AHEAD_START, false));
-                gameMap.put(jumpFinishAhead, new Field(jumpFinishAhead, 0,Special.JUMP_AHEAD_FINISH, false));
+            }while((gameMap.containsKey(jumpStartAhead)|| (gameMap.containsKey(jumpFinishAhead))) && attempt <=size/2);
+            if(!gameMap.containsKey(jumpStartAhead) && !gameMap.containsKey(jumpFinishAhead)) {
+                gameMap.put(jumpStartAhead, new Field(jumpStartAhead,jumpFinishAhead, Special.JUMP_AHEAD_START, false, Constants.JUMP + jumpFinishAhead));
+                gameMap.put(jumpFinishAhead, new Field(jumpFinishAhead, 0,Special.JUMP_AHEAD_FINISH, false, ""));
                 System.out.println("jumpStartAhead " + jumpStartAhead);
                 System.out.println("jumpFinishAhead " + jumpFinishAhead);
-            //}
+            }
         }
         System.out.println(gameMap);
+        random = null;
         return  gameMap;
     }
 
@@ -239,21 +234,22 @@ public class MapGeneration {
             attempt++;
             field = random.nextInt(1, size - 1);
         }while(gameMap.containsKey(field) && attempt <=size);
+        random = null;
         return field;
     }
 
     private void setNormalField(){
-        gameMap.put(0, new Field(0,0, Special.START, true));
-        gameMap.put(size+1, new Field(size+1,0, Special.FINISH, false));
+        gameMap.put(0, new Field(0,0, Special.START, true, "Start"));
+        gameMap.put(size+1, new Field(size+1,0, Special.FINISH, false, "Finish! Congratulations!"));
         for (int i=1; i<=size; i++){
             if(!gameMap.containsKey(i)){
-                gameMap.put(i, new Field(i, 0,Special.NORMAL_FIELD, false));
+                gameMap.put(i, new Field(i, 0,Special.NORMAL_FIELD, false, ""));
             }
         }
     }
 
-    private void setGameMap(int field, Special special){
-        gameMap.put(field, new Field(field,0, special, false));
+    private void setGameMap(int field, Special special, String task){
+        gameMap.put(field, new Field(field,0, special, false, task));
     }
 
     private void printGameMap(){
@@ -262,4 +258,7 @@ public class MapGeneration {
             System.out.println(gameMap.get(key).toString());
         }
     }
+
+
+
 }
